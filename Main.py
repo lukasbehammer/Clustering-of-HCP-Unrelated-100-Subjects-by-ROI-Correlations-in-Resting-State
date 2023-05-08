@@ -2,12 +2,14 @@ from Import import *
 from nilearn import datasets
 from nilearn.regions import connected_label_regions
 from nilearn import image as nimg
+import nibabel as nib
 import numpy as np
 
 # fetch parcellations
 parcel_dir = './resources/rois/'
 atlas_aal_SPM12 = datasets.fetch_atlas_aal(data_dir=parcel_dir)
 region_labels = connected_label_regions(atlas_aal_SPM12['maps'])
+# region_labels = nib.load('./resources/rois/aal_SPM12/aal/ROI_MNI_V4.nii')
 region_labels_data = region_labels.get_fdata()
 
 # mask regions
@@ -26,10 +28,12 @@ for region in regions:
 
 mean_intensity_per_region_array = []
 shape = img_fMRI.header.get_data_shape()
+# resampled_img_fMRI = nimg.resample_to_img(img_fMRI, region_labels, interpolation='nearest')
+resampled_img_fMRI = img_fMRI
 for timestamp in np.arange(shape[3]):
 
     # resample Image
-    resampled_img_data_fMRI = nimg.resample_to_img(img_fMRI, region_labels, interpolation='nearest').dataobj[:, :, :, timestamp]
+    resampled_img_data_fMRI = resampled_img_fMRI.dataobj[:, :, :, timestamp]
 
     # calculate mean intensity per region
     mean_intensity_per_region_list = []
@@ -37,22 +41,4 @@ for timestamp in np.arange(shape[3]):
         mean_intensity_per_region_list.append(np.mean(resampled_img_data_fMRI[binary_region_list[int(region)-1]]))
     mean_intensity_per_region_array.append(mean_intensity_per_region_list)
 
-
-# # load Average T1w Image
-# path_T1w = "./Data/S1200_AverageT1w_restore.nii.gz"
-# img_T1w, img_data_T1w = img_data_loader(path_T1w)
-#
-# # resample T1w Image
-# resampled_img_data_T1w = nimg.resample_to_img(img_T1w, region_labels, interpolation='nearest').get_fdata()
-#
-# # plot fMRI-image with parcellation
-# fig, ax = plt.subplots()
-# plot_in_orientation(resampled_img_fMRI, 'transversal', 30, ax=ax, cmap="coolwarm")
-# plot_in_orientation(masked_aal, 'transversal', 30, cmap="Paired", ax=ax)
-# plt.show()
-#
-# # plot region
-# which_region = 125
-# masked_region = np.ma.masked_where((binary_region_list[which_region] * resampled_img_data_T1w) == 0,
-#                                    (binary_region_list[which_region] * resampled_img_data_T1w))
-# plot_in_orientation(masked_region, 'transversal', 45)
+np.save('./Data/mean_intensity_per_region.npy', mean_intensity_per_region_array)
