@@ -4,9 +4,9 @@ import numpy as np
 import os
 
 
-def get_timeseries(patient):
+def get_timeseries_per_patient(patient, path="./Data/rfMRI_REST1_LR_hp2000_clean.nii.gz"):
     # load specific fMRI Image
-    path_fMRI = "./Data/rfMRI_REST1_LR_hp2000_clean.nii.gz"
+    path_fMRI = path  # add os.path.join()
     img_fMRI = nib.load(path_fMRI)
 
     # load atlas data
@@ -34,8 +34,30 @@ def get_timeseries(patient):
         # timestamp to time series
 
     filename = f"{patient}_timeseries.npy"
-    path = "./Data"
+    path = "./Data/timeseries"
     file = os.path.join(path, filename)
     np.save(file, mean_intensity_per_region_array)  # save time series as numpy object
 
     return mean_intensity_per_region_array
+
+
+def get_all_timeseries(path):
+    # list_of_patients =
+    for patient in list_of_patients:
+        get_timeseries_per_patient(path, patient)
+
+
+def timeseries_pearson_corr(arr_1, step_width=12, overlap_percentage=0.2):
+    shape = arr_1.shape
+    offset = int(overlap_percentage * step_width)
+    connectomics = []
+    start = 0
+    while True:
+        stop = start + step_width
+        if stop > shape[0]:
+            break
+        r = np.corrcoef(arr_1[start:stop, :], rowvar=False)
+        connectomics.append(r)
+        start = stop - offset
+
+    return connectomics
