@@ -3,7 +3,7 @@ from nilearn import image as nimg
 import numpy as np
 
 # load atlas data
-region_labels, masked_aal, regions, binary_region_list = get_parcellation_data(fetched=True)
+region_labels, masked_aal, regions = get_parcellation_data(fetched=True)
 
 # load specific fMRI Image
 path_fMRI = "./Data/rfMRI_REST1_LR_hp2000_clean.nii.gz"

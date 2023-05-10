@@ -10,7 +10,7 @@ def get_timeseries_per_patient(patient, path="./Data/rfMRI_REST1_LR_hp2000_clean
     img_fMRI = nib.load(path_fMRI)
 
     # load atlas data
-    region_labels, masked_aal, regions, binary_region_list = get_parcellation_data(fetched=True)
+    region_labels, masked_aal, regions = get_parcellation_data(fetched=True)
 
     mean_intensity_per_region_array = []
     shape = img_fMRI.header.get_data_shape()  # get shape for amount of timestamps
@@ -28,7 +28,7 @@ def get_timeseries_per_patient(patient, path="./Data/rfMRI_REST1_LR_hp2000_clean
         # calculate mean intensity per region and timestamp
         mean_intensity_per_region_list = []
         for region in regions:
-            mean_intensity_per_region_list.append(np.mean(resampled_img_data_fMRI[binary_region_list[int(region)-1]]))
+            mean_intensity_per_region_list.append(np.mean(resampled_img_data_fMRI[region_labels == region]))
             # compute mean intensity per region
         mean_intensity_per_region_array.append(mean_intensity_per_region_list)  # add mean intensity per region for this
         # timestamp to time series
