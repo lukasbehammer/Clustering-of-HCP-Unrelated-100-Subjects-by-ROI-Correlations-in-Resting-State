@@ -17,15 +17,23 @@ img_T1w, img_data_T1w = img_data_loader(path_T1w)
 resampled_img_data_T1w = nimg.resample_to_img(img_T1w, region_labels, interpolation='nearest').get_fdata()
 # resampled_img_fMRI = nimg.resample_to_img(img_fMRI, region_labels, interpolation='nearest')
 resampled_img_fMRI = img_fMRI  # HCP fMRI image has already same size as region labels
+timestamp = 100
+resampled_img_data_fMRI = resampled_img_fMRI.dataobj[:, :, :, timestamp]
+
+which_region = 13
+masked_aal = np.ma.masked_where(masked_aal != regions[which_region], masked_aal)
 
 # plot fMRI-image with parcellation
+orientation = 'transversal'
+slice = 45
 fig, ax = plt.subplots()
-plot_in_orientation(resampled_img_fMRI, 'transversal', 30, ax=ax, cmap="coolwarm")
-plot_in_orientation(masked_aal, 'transversal', 30, cmap="Paired", ax=ax)
+plot_in_orientation(resampled_img_data_fMRI, orientation, slice, ax=ax, cmap="coolwarm")
+plot_in_orientation(masked_aal, orientation, slice, cmap="Paired", ax=ax)
 plt.show()
 
 # plot region
-which_region = 125
-masked_region = np.ma.masked_where((binary_region_list[which_region] * resampled_img_data_T1w) == 0,
-                                   (binary_region_list[which_region] * resampled_img_data_T1w))
-plot_in_orientation(masked_region, 'transversal', 45)
+masked_region = np.ma.masked_where((binary_region_list[which_region] * resampled_img_data_fMRI) == 0,
+                                   (binary_region_list[which_region] * resampled_img_data_fMRI))
+plot_in_orientation(masked_region, orientation, slice)
+
+mean = np.mean(binary_region_list[which_region] * resampled_img_data_fMRI)
