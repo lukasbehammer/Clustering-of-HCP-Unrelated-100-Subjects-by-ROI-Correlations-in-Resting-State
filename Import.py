@@ -46,4 +46,4 @@ def get_parcellation_data(parcel_dir='./resources/rois/', fetched=False):
     # make array in which each region has 0 or 1 for each voxel in 3D space
     regions = np.unique(masked_aal)[0:-1]  # get list of all region labels
 
-    return region_labels, masked_aal, regions
+    return region_labels, region_labels_data, masked_aal, regions

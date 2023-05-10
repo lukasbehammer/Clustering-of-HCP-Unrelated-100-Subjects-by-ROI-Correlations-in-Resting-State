@@ -1,4 +1,5 @@
 from Import import get_parcellation_data
+import nilearn.image as nimg
 import nibabel as nib
 import numpy as np
 import os
@@ -10,14 +11,15 @@ def get_timeseries_per_patient(patient, path="./Data/rfMRI_REST1_LR_hp2000_clean
     img_fMRI = nib.load(path_fMRI)
 
     # load atlas data
-    region_labels, masked_aal, regions = get_parcellation_data(fetched=True)
+    region_labels, region_labels_data, masked_aal, regions = get_parcellation_data(fetched=True)
 
     mean_intensity_per_region_array = []
     shape = img_fMRI.header.get_data_shape()  # get shape for amount of timestamps
 
     # resample fMRI image to region labels
-    # resampled_img_fMRI = nimg.resample_to_img(img_fMRI, region_labels, interpolation='nearest')
-    resampled_img_fMRI = img_fMRI  # HCP fMRI image has already same size as region labels
+    resampled_img_fMRI = nimg.resample_to_img(img_fMRI, region_labels, interpolation='nearest') \
+        if shape[:3] != region_labels_data.shape else img_fMRI  # HCP fMRI image has already same
+    # size as region labels
 
     # compute activity time series
     for timestamp in np.arange(shape[3]):
@@ -28,7 +30,7 @@ def get_timeseries_per_patient(patient, path="./Data/rfMRI_REST1_LR_hp2000_clean
         # calculate mean intensity per region and timestamp
         mean_intensity_per_region_list = []
         for region in regions:
-            mean_intensity_per_region_list.append(np.mean(resampled_img_data_fMRI[region_labels == region]))
+            mean_intensity_per_region_list.append(np.mean(resampled_img_data_fMRI * (region_labels_data == region)))
             # compute mean intensity per region
         mean_intensity_per_region_array.append(mean_intensity_per_region_list)  # add mean intensity per region for this
         # timestamp to time series
