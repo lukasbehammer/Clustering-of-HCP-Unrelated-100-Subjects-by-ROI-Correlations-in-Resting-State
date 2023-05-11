@@ -47,23 +47,35 @@ def get_timeseries_per_patient(patient_id, scan_num, path="./Data/rfMRI_REST1_LR
     return mean_intensity_per_region_array
 
 
-def get_all_timeseries(scans, path="D:/HCP/Unrelated 100/Patients"):
+def get_all_timeseries(scans, patients, path="D:/HCP/Unrelated 100/Patients"):
     """
-    Gets all timeseries of chosen scans for all patients.
+    Gets all timeseries of chosen scans for chosen patients.
+
+    Examples
+    --------
+    >>> from Main import get_all_timeseries
+    >>> scans = [0, 1]
+    >>> patients = ["100307", "100408"]
+    >>> get_all_timeseries(scans=scans, patients=patients)
+    4 timeseries saved as .npy
+
 
     Parameters
     ----------
     :param scans: list, default=None
                 which scans should be used, four possible scans are '0', '1', '2' and '3', has to be a list like [0, 1]
+    :param patients: list, default=None
+                which patients to get the scans from, list with HCP patient IDs as strings
     :param path: str or path-like object, default="D:/HCP/Unrelated 100/Patients"
                 path where patients folders are located
     :return: None, saves timeseries to numpy file
     """
-    list_of_patients = []  # add patients list here
+    num_of_series = 0
     for scan in scans:
-        for patient in list_of_patients:
+        for patient in patients:
             get_timeseries_per_patient(patient_id=patient, scan_num=scan, path=path)
-
+            num_of_series += 1
+    print(f"{int(num_of_series)} timeseries saved as .npy")
 
 def timeseries_pearson_corr(arr_1, step_width=12, overlap_percentage=0.2):
     shape = arr_1.shape
