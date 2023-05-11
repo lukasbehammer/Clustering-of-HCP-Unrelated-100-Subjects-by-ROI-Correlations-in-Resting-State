@@ -45,9 +45,5 @@ def get_parcellation_data(parcel_dir='./resources/rois/', fetched=False):
 
     # make array in which each region has 0 or 1 for each voxel in 3D space
     regions = np.unique(masked_aal)[0:-1]  # get list of all region labels
-    binary_region_list = []
-    for region in regions:
-        binary_region = masked_aal == region  # compute boolean value for each voxel per region
-        binary_region_list.append(binary_region)
 
-    return region_labels, masked_aal, regions, binary_region_list
+    return region_labels, region_labels_data, masked_aal, regions
