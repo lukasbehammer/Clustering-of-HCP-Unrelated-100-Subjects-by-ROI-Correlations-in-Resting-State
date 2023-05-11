@@ -5,10 +5,14 @@ import numpy as np
 import os
 
 
-def get_timeseries_per_patient(patient, path="./Data/rfMRI_REST1_LR_hp2000_clean.nii.gz"):
+def get_timeseries_per_patient(patient_id, scan_num, path="./Data/rfMRI_REST1_LR_hp2000_clean.nii.gz"):
     # load specific fMRI Image
-    path_fMRI = path  # add os.path.join()
-    img_fMRI = nib.load(path_fMRI)
+    scan_names = ["rfMRI_REST1_LR", "rfMRI_REST1_RL", "rfMRI_REST2_LR", "rfMRI_REST2_RL"]
+    file_names = ["rfMRI_REST1_LR_hp2000_clean.nii.gz", "rfMRI_REST1_RL_hp2000_clean.nii.gz",
+                  "rfMRI_REST2_LR_hp2000_clean.nii.gz", "rfMRI_REST2_RL_hp2000_clean.nii.gz"]
+    subpath = f"{patient_id}/MINNonLinear/Results/{scan_names[scan_num]}"
+    file_fMRI = os.path.join(path, subpath, file_names[scan_num])
+    img_fMRI = nib.load(file_fMRI)
 
     # load atlas data
     region_labels, region_labels_data, masked_aal, regions = get_parcellation_data(fetched=True)
@@ -35,7 +39,7 @@ def get_timeseries_per_patient(patient, path="./Data/rfMRI_REST1_LR_hp2000_clean
         mean_intensity_per_region_array.append(mean_intensity_per_region_list)  # add mean intensity per region for this
         # timestamp to time series
 
-    filename = f"{patient}_timeseries.npy"
+    filename = f"patient-{patient_id}_scan-{scan_num}_timeseries.npy"
     path = "./Data/timeseries"
     file = os.path.join(path, filename)
     np.save(file, mean_intensity_per_region_array)  # save time series as numpy object
@@ -43,10 +47,22 @@ def get_timeseries_per_patient(patient, path="./Data/rfMRI_REST1_LR_hp2000_clean
     return mean_intensity_per_region_array
 
 
-def get_all_timeseries(path):
-    # list_of_patients =
-    for patient in list_of_patients:
-        get_timeseries_per_patient(path, patient)
+def get_all_timeseries(scans, path="D:/HCP/Unrelated 100/Patients"):
+    """
+    Gets all timeseries of chosen scans for all patients.
+
+    Parameters
+    ----------
+    :param scans: list, default=None
+                which scans should be used, four possible scans are '0', '1', '2' and '3', has to be a list like [0, 1]
+    :param path: str or path-like object, default="D:/HCP/Unrelated 100/Patients"
+                path where patients folders are located
+    :return: None, saves timeseries to numpy file
+    """
+    list_of_patients = []  # add patients list here
+    for scan in scans:
+        for patient in list_of_patients:
+            get_timeseries_per_patient(patient_id=patient, scan_num=scan, path=path)
 
 
 def timeseries_pearson_corr(arr_1, step_width=12, overlap_percentage=0.2):
