@@ -10,7 +10,7 @@ def get_timeseries_per_patient(patient_id, scan_num, path="./Data/rfMRI_REST1_LR
     scan_names = ["rfMRI_REST1_LR", "rfMRI_REST1_RL", "rfMRI_REST2_LR", "rfMRI_REST2_RL"]
     file_names = ["rfMRI_REST1_LR_hp2000_clean.nii.gz", "rfMRI_REST1_RL_hp2000_clean.nii.gz",
                   "rfMRI_REST2_LR_hp2000_clean.nii.gz", "rfMRI_REST2_RL_hp2000_clean.nii.gz"]
-    subpath = f"{patient_id}/MINNonLinear/Results/{scan_names[scan_num]}"
+    subpath = f"{patient_id}/MNINonLinear/Results/{scan_names[scan_num]}"
     file_fMRI = os.path.join(path, subpath, file_names[scan_num])
     img_fMRI = nib.load(file_fMRI)
 
@@ -46,36 +46,6 @@ def get_timeseries_per_patient(patient_id, scan_num, path="./Data/rfMRI_REST1_LR
 
     return mean_intensity_per_region_array
 
-
-def get_all_timeseries(scans, patients, path="D:/HCP/Unrelated 100/Patients"):
-    """
-    Gets all timeseries of chosen scans for chosen patients.
-
-    Examples
-    --------
-    >>> from Main import get_all_timeseries
-    >>> scans = [0, 1]
-    >>> patients = ["100307", "100408"]
-    >>> get_all_timeseries(scans=scans, patients=patients)
-    4 timeseries saved as .npy
-
-
-    Parameters
-    ----------
-    :param scans: list, default=None
-                which scans should be used, four possible scans are '0', '1', '2' and '3', has to be a list like [0, 1]
-    :param patients: list, default=None
-                which patients to get the scans from, list with HCP patient IDs as strings
-    :param path: str or path-like object, default="D:/HCP/Unrelated 100/Patients"
-                path where patients folders are located
-    :return: None, saves timeseries to numpy file
-    """
-    num_of_series = 0
-    for scan in scans:
-        for patient in patients:
-            get_timeseries_per_patient(patient_id=patient, scan_num=scan, path=path)
-            num_of_series += 1
-    print(f"{int(num_of_series)} timeseries saved as .npy")
 
 def timeseries_pearson_corr(arr_1, step_width=12, overlap_percentage=0.2):
     shape = arr_1.shape
