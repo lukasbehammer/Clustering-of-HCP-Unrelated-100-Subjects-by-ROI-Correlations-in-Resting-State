@@ -29,7 +29,7 @@ slices = (coronal_slice, sagittal_slice, transversal_slice)
 correlation_threshold = 0.75
 
 # import all timeseries
-files = glob("D:/HCP/Unrelated 100/Patients/timeseries/*")
+files = glob("N:/HCP/Unrelated 100/Patients/timeseries/*")
 all_timeseries = [np.load(file) for file in files]
 len(all_timeseries)
 
@@ -58,7 +58,7 @@ for k in np.arange(len(correlation_matrices_per_patient)):
         correlation_matrices_per_patient[k][l,l] = 0
 correlation_matrices_per_patient_abs = np.abs(correlation_matrices_per_patient)
 correlation_matrices_per_patient_abs_thresh = correlation_matrices_per_patient_abs * \
-                                              (correlation_matrices_per_patient_abs>correlation_threshold)
+                                              (correlation_matrices_per_patient_abs > correlation_threshold)
 
 p1 = correlation_matrices_per_patient_abs_thresh[0:25, :, :]
 p2 = correlation_matrices_per_patient_abs_thresh[25:50, :, :]
@@ -75,8 +75,4 @@ p12 = correlation_matrices_per_patient_abs_thresh[275:300, :, :]
 
 matrices = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12]
 
-if __name__ == '__main__':
-    pool = Pool()
-    results = pool.starmap(create_network_graph_frames, zip(itertools.repeat(resampled_img_data_T1w),
-                                                            itertools.repeat(slices), matrices,
-                                                            itertools.repeat(all_centroids)))
+create_network_graph_frames(resampled_img_data_T1w, (coronal_slice, sagittal_slice, transversal_slice), correlation_matrices_per_patient_abs_thresh, all_centroids, regions, region_labels)
