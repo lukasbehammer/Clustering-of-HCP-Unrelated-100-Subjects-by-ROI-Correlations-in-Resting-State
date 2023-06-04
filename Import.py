@@ -1,8 +1,6 @@
 import nibabel as nib
 import numpy as np
-import matplotlib.pyplot as plt
 from nilearn import datasets
-from nilearn.regions import connected_label_regions
 
 
 def img_data_loader(file):

@@ -1,6 +1,7 @@
 from multiprocessing import Pool
-from Main import create_network_graph_frames, timeseries_pearson_corr
+from Main import timeseries_pearson_corr
 from Import import img_data_loader, get_parcellation_data
+from Visualization import create_network_graph_frames
 import nilearn.image as nimg
 from glob import glob
 import numpy as np
