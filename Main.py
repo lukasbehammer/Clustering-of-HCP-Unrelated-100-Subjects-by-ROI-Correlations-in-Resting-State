@@ -1,9 +1,14 @@
+# Copyright (c) 2023, Lukas Behammer
+# All rights reserved.
+#
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
+
 from Import import get_parcellation_data
 import nilearn.image as nimg
 import nibabel as nib
 import numpy as np
 import os
-
 
 def get_timeseries_per_patient(patient_id, scan_num, path="N:/HCP/Unrelated 100/Patients"):
     """

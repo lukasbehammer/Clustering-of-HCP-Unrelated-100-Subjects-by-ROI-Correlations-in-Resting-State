@@ -1,8 +1,13 @@
+# Copyright (c) 2023, Lukas Behammer
+# All rights reserved.
+#
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
+
 import matplotlib.pyplot as plt
 import numpy as np
 import networkx as nx
 import os
-
 
 class OrientationException(Exception):
     """
