@@ -4,7 +4,42 @@ import networkx as nx
 import os
 
 
+class OrientationException(Exception):
+    """
+    "No valid orientation found!" Use "coronal", "sagittal" or "transversal".
+    """
+    pass
+
 def plot_in_orientation(img_data, orientation, slice, cmap="gray", ax=None, **kwargs):
+    """
+        Plots 3D MRI images in different orientations.
+
+        Examples
+        ----------
+        >>> from Visualization import plot_in_orientation
+        >>> from Import import img_data_loader
+        >>> path_T1w = "./Data/S1200_AverageT1w_restore.nii.gz"
+        >>> img_T1w, img_data_T1w = img_data_loader(path_T1w)
+        >>> plotted_img = plot_in_orientation(img_data=img_data_T1w, orientation="coronal", slice=50,
+        >>>                                     title="T1 weighted MRI")
+
+        Parameters
+        ----------
+        :param img_data: array with image data
+        :type img_data: np.ndarray
+        :param orientation: orientation to plot, must be "coronal", "sagittal" or "transversal"
+        :type orientation: str
+        :param slice: image plane orthogonal to orientation to show
+        :type slice: int
+        :param cmap: matplotlib colormap to use for plotting, defaults to "gray"
+        :type cmap: str
+        :param ax: Axes element to plot in, optional, defaults to None
+        :type ax: matplotlib.axes.Axes or None
+        :param kwargs: additional arguments passed to matplotlib imshow
+        :return: plotted image
+        :rtype: matplotlib.axes.Axes
+        :raise: OrientationException when incompatible value for parameter orientation is given
+    """
     if orientation == "coronal":
         coronal = np.transpose(img_data, [0, 2, 1])
         coronal = np.rot90(coronal, 1)
@@ -21,13 +56,45 @@ def plot_in_orientation(img_data, orientation, slice, cmap="gray", ax=None, **kw
         plot = ax.imshow(transversal[:, :, slice], cmap=cmap, **kwargs) if ax else plt.imshow(transversal[:, :, slice],
                                                                                               cmap=cmap)
     else:
-        print("No valid orientation found!")
+        raise OrientationException
     if not ax:
         plt.show()
     return plot
 
 
 def create_network_graph_frames(t1w, slices, matrix, all_centroids, regions, region_labels):
+    """
+        Compute frames for three-dimensional video. Generates images of weighted network graph.
+
+        Examples
+        ----------
+        >>> from Visualization import create_network_graph_frames
+        >>> from Import import get_parcellation_data
+        >>> region_maps, region_maps_data, masked_aal, regions, region_labels = get_parcellation_data(fetched=True)
+        Atlas has been loaded.
+        >>> resampled_img_data_T1w = foo
+        >>> correlation_matrices_per_patient = bar
+        >>> all_centroids = foobar
+        >>> create_network_graph_frames(resampled_img_data_T1w, (50, 45, 45), correlation_matrices_per_patient,
+        >>>                                 all_centroids, regions, region_labels)
+        All figures saved.
+
+        Parameters
+        ----------
+        :param t1w: to fMRI data resampled T1 weighted MRI
+        :type t1w: np.ndarray
+        :param slices: tuple with slice values as int
+        :type slices: tuple[int, int, int]
+        :param matrix: correlation matrix to be used for edge weight
+        :type matrix: np.ndarray
+        :param all_centroids: array with coordinates of all centroids
+        :type all_centroids: np.ndarray
+        :param regions: array with region labels
+        :type regions: np.ndarray
+        :param region_labels: array with region labels in 3D space
+        :type region_labels: np.ndarray
+        :return: None
+    """
     angle1_part = np.linspace(0, 30, num=int(len(matrix)/4))
     angle1 = np.concatenate((angle1_part, np.flip(angle1_part)[1:], angle1_part[1:], np.flip(angle1_part)[1:],
                              angle1_part[1:]))

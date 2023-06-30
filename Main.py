@@ -6,6 +6,25 @@ import os
 
 
 def get_timeseries_per_patient(patient_id, scan_num, path="N:/HCP/Unrelated 100/Patients"):
+    """
+        Calculates timeseries of mean intensity per parcellation region for one patient.
+
+        Examples
+        ----------
+        >>> from Main import get_timeseries_per_patient
+        >>> patient = "100307"
+        >>> timeseries_100307 = get_timeseries_per_patient(patient_id=patient, scan_num=3)
+
+        Parameters
+        ----------
+        :param patient_id: ID of the patient to calculate timeseries of
+        :type patient_id: str
+        :param scan_num: Number of session, needs to be one of [0, 1, 2, 3]
+        :type scan_num: int
+        :param path: Location of the patients folders
+        :type path: str or os.PathLike
+        :return: timeseries with mean intensity per atlas region
+    """
     # load specific fMRI Image
     scan_names = ["rfMRI_REST1_LR", "rfMRI_REST1_RL", "rfMRI_REST2_LR", "rfMRI_REST2_RL"]
     file_names = ["rfMRI_REST1_LR_hp2000_clean.nii.gz", "rfMRI_REST1_RL_hp2000_clean.nii.gz",
@@ -47,6 +66,27 @@ def get_timeseries_per_patient(patient_id, scan_num, path="N:/HCP/Unrelated 100/
 
 
 def timeseries_pearson_corr(arr_1, step_width=12, overlap_percentage=0.2):
+    """
+        Calculates the pearson's r coefficient for a timeseries in a sliding window.
+
+        Examples
+        ----------
+        >>> from Main import timeseries_pearson_corr
+        >>> from Main import get_timeseries_per_patient
+        >>> patient = "100307"
+        >>> timeseries = np.array(get_timeseries_per_patient(patient_id=patient, scan_num=3))
+        >>> timeseries_pearson_corr(timeseries)
+
+        Parameters
+        ----------
+        :param arr_1: Array with timeseries to calculate correlation of
+        :type arr_1: np.ndarray
+        :param step_width: Width of sliding window, defaults to 12
+        :type step_width: int
+        :param overlap_percentage: Percentage of sliding window overlap as decimal
+        :type overlap_percentage: float
+        :return: correlation matrix with inter-region correlations
+    """
     shape = arr_1.shape
     offset = int(overlap_percentage * step_width)
     correlation_matrix = []
@@ -63,6 +103,23 @@ def timeseries_pearson_corr(arr_1, step_width=12, overlap_percentage=0.2):
 
 
 def get_centroid(coordinate_list):
+    """
+        Calculates centroid for given list of coordinates.
+
+        Examples
+        ----------
+        >>> from Main import get_centroid
+        >>> coordinates = [[5, 2, 5], [2, 1, 4]]
+        >>> centroids = get_centroid(coordinates)
+        >>> print(centroids)
+        (3.5, 1.5, 4.5)
+
+        Parameters
+        ----------
+        :param coordinate_list: list of coordinate to compute centroid thereof
+        :type coordinate_list: list
+        :return: coordinates of centroid
+    """
     length = len(coordinate_list)
     sum_x = np.sum([coordinate_list[item][0] for item in np.arange(length)])
     sum_y = np.sum([coordinate_list[item][1] for item in np.arange(length)])
@@ -71,6 +128,30 @@ def get_centroid(coordinate_list):
 
 
 def get_centroids_per_region(region_labels_data, regions, region_from, region_to):
+    """
+        Calculate centroids for interval of regions.
+
+        Examples
+        ----------
+        >>> from Main import get_centroids_per_region
+        >>> from Import import get_parcellation_data
+        >>> region_maps, region_maps_data, masked_aal, regions, region_labels = get_parcellation_data(fetched=True)
+        Atlas has been loaded.
+        >>> centroids = get_centroids_per_region(region_labels_data=masked_aal, regions=regions, region_from=0,
+        >>>                                         region_to=len(regions))
+
+        Parameters
+        ----------
+        :param region_labels_data: array with region labels in 3D space
+        :type region_labels_data: np.ndarray
+        :param regions: array with region labels
+        :type regions: np.ndarray
+        :param region_from: region number to start
+        :type region_from: int
+        :param region_to: region number to end
+        :type region_to: int
+        :return: list of regions centroids
+    """
     regions = regions[region_from:region_to]
     centroids = []
     for region in regions:
