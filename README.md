@@ -1,4 +1,4 @@
-# Clustering of HCP Unrelated 100 Subjects by ROI-Correlations in Resting State
+# Clustering of HCP Unrelated 100 Subjects by ROI-Correlations in Resting State fMRI
 
 This is a Work In Progress (WIP) project. It is part of my undergraduate studies in Biomedical Engineering at
 Ostbayerische Technische Hochschule in Germany. This repository incorporates the code and results of my participation
@@ -21,6 +21,9 @@ genetic sequencing and several sensory and motoric test as well as cognitive eva
 work is using only parts of the resting state fMRI data (specifically Resting State fMRI 1 FIX-Denoised Extended) in 
 the HCP Unrelated 100 dataset. This is due to considerations regarding storage space as well as processing time and 
 power. Therefore, only the first session in the downloaded data has been used until now.
+
+## Usage
+Open this [notebook](https://github.com/lukasbehammer/Clustering-of-HCP-Unrelated-100-Subjects-by-ROI-Correlations-in-Resting-State/blob/78e4efae3ce67698b1f36f4b8103602e787adc9f/Clustering%20of%20HCP%20Unrelated%20100%20Subjects%20by%20ROI-Correlations%20in%20Resting%20State%20fMRI.ipynb).
 
 ## Acknowledgements and additional notes
 Data were provided by the Human Connectome Project, WU-Minn Consortium (Principal Investigators: David Van 
